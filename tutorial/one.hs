@@ -18,3 +18,29 @@ fak3 2 = 2
 fak3 i = i * (fak3 $ pred i)
 
 take' 0 _ = []
+take' a (x:xs) = x : (take' (pred a) xs)
+take' _ [] = []
+
+drop' 0 xs = xs
+drop' _ [] = []
+drop' a (x:xs) = drop' (pred a) xs
+
+fst' (a,b) = a
+
+map' f [] = []
+map' f (x:xs) = f x : map' f xs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- save
