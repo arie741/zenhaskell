@@ -16,3 +16,5 @@ fak2 i
 fak3 0 = 1
 fak3 2 = 2
 fak3 i = i * (fak3 $ pred i)
+
+take' 0 _ = []
