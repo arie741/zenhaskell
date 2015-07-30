@@ -36,11 +36,11 @@ delete' a (x:xs) = if x == a then xs else x : delete' a xs
 
 --nub
 nub' [] = []
-nub' (x:xs) = x : nub'  (filter (x /= ) xs)
+nub' (x:xs) = x : nub'  (filter' (x /= ) xs)
 
 --foldl
 foldl2 f a [] = a
-foldl2 f a (x:xs) = foldl2 f (x + a) xs
+foldl2 f a (x:xs) = foldl2 f (f x a) xs
 
 --foldl1
 foldl12 f (x:y:xs) = if xs == [] then f x y else foldl12 f ((f x y):xs)
@@ -60,7 +60,7 @@ nth (x:xs) a = if a == 0 then x else nth xs (pred a)
 
 --sort
 sort' [] = []
-sort' xs = minimum xs : (sort' (delete (minimum xs) xs))
+sort' xs = minimum' xs : (sort' (delete (minimum' xs) xs))
 
 --scanl
 scanl2 _ a [] = [a]
@@ -73,19 +73,19 @@ scanl12 f (x:y:xs) = x : scanl12 f ((f x y):xs)
 
 --inits
 inits' [] = [[]]
-inits' xs = inits' (init xs) ++ [xs]
+inits' xs = inits' (init' xs) ++ [xs]
 
 --tails
 tails' [] = [[]]
-tails' xs = [xs] ++ tails' (tail xs)
+tails' xs = [xs] ++ tails' (tail' xs)
 
 --elem
 elem2 _ [] = False
-elem2 a xs = if xs == [a] then True else elem2 a (filter (1 == ) xs)
+elem2 a (x:xs) = if x == a then True else elem2 a xs
 
 --notElem
 notElem2 _ [] = True
-notElem2 a xs = if xs == [a] then False else notElem2 a (filter (1 == ) xs)
+notElem2 a (x:xs) = if xs == a then False else notElem2 a xs
 
 --head
 head2 (x:xs) = x
@@ -116,10 +116,12 @@ max' a b = if a >= b then a else b
 min' a b = if a <= b then a else b
 
 --minimum
-minimum' xs = head (sort xs)
+minimum' (x:[]) = x
+minimum' (x:y:xs) = minimum' ((min' x y):xs)
 
 --maximum
-maximum' xs = tail (sort xs)
+maximum' (x:[]) = x
+maximum' (x:y:xs) = maximum' ((max' x y):xs)
 
 --concat
 concat2 [[]] = []
@@ -127,7 +129,9 @@ concat2 (x:[]) = x
 concat2 (x:xs) = x ++ concat2 xs
 
 --union
-union' xs ys = xs ++ ys
+union' [] xs = xs
+union' xs [] = xs
+union' (x:xs) ys = if elem2 x ys then x:union' xs (filter' (x /= ) (nub' ys)) else x:union' xs ys
 
 --intersect
 intersect2 [] _ = []
@@ -145,14 +149,14 @@ intercalate' _ (x:[]) = x
 intercalate' as (x:xs) = x ++ as ++ intercalate' as xs
 
 --and
-and' xs = if elem False xs then False else True
+and' xs = if elem2 False xs then False else True
 
 --or
-or' xs = if elem True xs then True else False
+or' xs = if elem2 True xs then True else False
 
 --group
 group' [] = []
-group' (x:xs) = [[x]] ++ group' xs
+group' (x:xs) = takeWhile' (x == ) (x:xs) : group' (dropWhile' (x == ) (x:xs))
 
 --zip3
 zip32 [] _ _ = []
@@ -162,8 +166,7 @@ zip32 (a:as) (b:bs) (c:cs) = (a,b,c) : (zip32 as bs cs)
 
 --sum
 sum' [] = 0
-sum' (x:[]) = x
-sum' (x:y:xs) = x + y + sum' xs
+sum' (x:xs) = x + sum' xs
 
 --product
 product' [] = 1
@@ -171,7 +174,30 @@ product' (x:xs) = x * product' xs
 
 --splitAt
 splitAt' _ [] = ([],[])
-splitAt' a xs = (take a xs, drop a xs)
+splitAt' a xs = (take' a xs, drop' a xs)
 
 --words
 words' "" = []
+
+--lines
+lines' "" = []
+
+--unlines
+unlines' ln = intercalate "\n" ln ++ "\n"
+
+--unwords
+unwords' wds = intercalate " " wds
+
+--takeWhile
+takeWhile' _ [] = []
+takeWhile' f (x:xs) = if f x then x : takeWhile' f xs else []
+
+--dropWhile
+dropWhile' _ [] = []
+dropWhile' f (x:xs) = if f x then dropWhile' f xs else x : xs
+
+--concatMap
+
+--all
+all' f [] = True
+all' f (x:xs) = if f x then all' xs else False
