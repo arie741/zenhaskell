@@ -30,6 +30,10 @@ map' f (x:xs) = f x : map' f xs
 filter' f [] = []
 filter' f (x:xs) = if (f x == False) then (filter' f xs) else x : (filter' f xs)
 
+--remove
+remove' f [] = []
+remove' f (x:xs) = if (f x == True) then (remove' f xs) else x: (remove' f xs)
+
 --delete
 delete' _ [] = []
 delete' a (x:xs) = if x == a then xs else x : delete' a xs
@@ -178,6 +182,7 @@ splitAt' a xs = (take' a xs, drop' a xs)
 
 --words
 words' "" = []
+words' str = takeWhile' (' ' /= ) str ++ words' (delete' ' ' (dropWhile' (' ' == ) str))
 
 --lines
 lines' "" = []
@@ -200,4 +205,26 @@ dropWhile' f (x:xs) = if f x then dropWhile' f xs else x : xs
 
 --all
 all' f [] = True
-all' f (x:xs) = if f x then all' xs else False
+all' f (x:xs) = if f x then all' f xs else False
+
+--any
+any' f [] = False
+any' f (x:xs) = if f x then True else any' f xs
+
+--insert
+insert2 a [] = [a]
+insert2 a (x:xs) = if a > x then x : insert2 a xs else a : insert2 x xs
+
+
+--partition
+partition' _ [] = ([], [])
+partition' f xs = ((filter' f xs), (remove' f xs))
+
+--plus3
+plus3 a b c = a + b + c
+
+--zipWith3
+zipWith32 f [] _ _ = []
+zipWith32 f _ [] _ = []
+zipWith32 f _ _ [] = []
+zipWith32 f (x:xs) (y:ys) (z:zs) = f x y z : zipWith32 f xs ys zs
